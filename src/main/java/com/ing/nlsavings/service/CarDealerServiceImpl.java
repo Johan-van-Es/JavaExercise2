@@ -26,17 +26,43 @@ public class CarDealerServiceImpl implements CarDealerService {
 
     @Override
     public void addCarToDealer(String dealerName, UUID carId) {
-        // Use the carService to get a car. And add it to the dealer.
+        Car findCar = carService.getCarById(carId);
+        if (findCar == null) {System.out.println("Auto niet gevonden");}
+        else {
+            Dealer findDealer = this.dealers.stream()
+                    .filter(dealer -> dealerName.equals(dealer.getName()))
+                    .findAny()
+                    .orElse (null);
+            if (findDealer == null) {System.out.println("Dealer "+dealerName+" niet gevonden");}
+            else findDealer.setCar(findCar);
+        }
     }
 
     @Override
     public void deleteCarFromDealer(UUID carId, String dealerName) {
-
+        Car findCar = carService.getCarById(carId);
+        if (findCar == null) {System.out.println("Auto niet gevonden");}
+        else {
+            Dealer findDealer = this.dealers.stream()
+                    .filter(dealer -> dealerName.equals(dealer.getName()))
+                    .findAny()
+                    .orElse (null);
+            if (findDealer == null) {System.out.println("Dealer "+dealerName+" niet gevonden");}
+            else findDealer.removeCar(findCar);
+        }
     }
 
     @Override
     public List<Car> getAllCarsFromDealer(String dealerName) {
-        return null;
+        Dealer findDealer = this.dealers.stream()
+                .filter(dealer -> dealerName.equals(dealer.getName()))
+                .findAny()
+                .orElse (null);
+        if (findDealer == null) {
+            System.out.println("Dealer "+dealerName+" niet gevonden");
+            return null;
+        }
+        else {return findDealer.getCars();}
     }
 
     // IMPORTANT! Normally it is not allowed to make the carService available like this.
